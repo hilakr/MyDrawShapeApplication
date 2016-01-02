@@ -49,9 +49,7 @@ public class DrawShape extends JPanel  implements MouseListener {
 
 		}
             
-
-    	
-    	
+  	
     	//check is the list of the shape LINE has at least 2 points to draw line
       	if (clicksforLine.size() >= 2)
         {
@@ -88,7 +86,7 @@ public class DrawShape extends JPanel  implements MouseListener {
     		       	for (int i=0; i < clicksforPoly.size(); i+=2 )
     		    	{
     		            int x1=0, y1=0, x2=0, y2=0;
-    		    	//	System.out.println("Line case");
+    		    		System.out.println("Line case");
     			        x1 = (int) clicksforPoly.get(i).getX();
     			        y1 = (int) clicksforPoly.get(i).getY();
     			        x2 = (int) clicksforPoly.get(i+1).getX();
@@ -193,7 +191,7 @@ public class DrawShape extends JPanel  implements MouseListener {
     		newX =  (int) ((x*Math.cos(delta) - y*Math.sin(delta)));
     		newY =  (int) ((x*Math.sin(delta) + y*Math.cos(delta))); 
     		vertexs.add(new Point(Math.round(newX),Math.round(newY)));    	
-    		//System.out.println(vertexs.get(i).x+","+vertexs.get(i).y);
+    		System.out.println(vertexs.get(i).x+","+vertexs.get(i).y);
     		delta = delta + deltaTemp;
     	}
     	//Sliding back
@@ -287,8 +285,7 @@ public class DrawShape extends JPanel  implements MouseListener {
 		Point point = new Point();
 		point.x = e.getX();
 		point.y = e.getY();
-		System.out.println("x = "+e.getX());
-		System.out.println("y = "+e.getY());
+
 	    switch (shape) {
 	    
 	    case LINE :
