@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 //Shape is enum for the various shapes
 enum Shape {CIRCLE, POLYGON, LINE, CURVE, CLEAR };
@@ -24,21 +25,52 @@ public class DrawShape extends JPanel  implements MouseListener {
 	DrawShape(){
         super();
         setBackground(Color.WHITE);
-        ReadFile file = new ReadFile();
-		file.openFile();       
-		Map <String,ArrayList<Point>> map = new HashMap<String,ArrayList<Point>>();
-		map = file.parseFile(); 
-		for (String key : map.keySet()) {
-	        System.out.println(key + " " + map.get(key));
-	        	
-		}
-		
         addMouseListener(this);
     }
 	//This method is responsible to draw the shapes    
     public void paintComponent(Graphics g) {
     	super.paintComponent(g);
-    	g.setColor(Color.red);
+    	/*print the boat*/
+    	ReadFile file = new ReadFile();
+ 		file.openFile();       
+ 		/* Map include all the points of the boat*/
+ 		Map <String,ArrayList<Point>> map = new HashMap<String,ArrayList<Point>>();
+ 		map = file.parseFile(); 
+ 		for (String key : map.keySet()) {
+ 	        	if (key.startsWith("line"))
+ 	        	{
+ 	    	        System.out.println(key + " " + map.get(key));
+ 	        		int x1 = (int) map.get(key).get(0).getX();
+ 	        		 int y1 = (int) map.get(key).get(0).getY();
+ 	        		 int x2 = (int)map.get(key).get(1).getX();
+ 	        		 int y2 = (int)map.get(key).get(1).getY();
+ 	        		 drawLine(x1,y1,x2,y2,g);	        		
+ 	        	}
+ 	        	if (key.startsWith("circle"))
+ 	        	{
+ 	    	        System.out.println(key + " " + map.get(key));
+ 	        		int x1 = (int) map.get(key).get(0).getX();
+ 	        		 int y1 = (int) map.get(key).get(0).getY();
+ 	        		 int x2 = (int)map.get(key).get(1).getX();
+ 	        		 int y2 = (int)map.get(key).get(1).getY();
+ 	        		 drawCircle(x1,y1,x2,y2,g);	        		
+ 	        	}
+ 	        	if (key.startsWith("curve"))
+ 	        	{
+ 	    	        System.out.println(key + " " + map.get(key));
+ 	        		int x1 = (int) map.get(key).get(0).getX();
+ 	        		int y1 = (int) map.get(key).get(0).getY();
+ 	        		int x2 = (int)map.get(key).get(1).getX();
+ 	        		int y2 = (int)map.get(key).get(1).getY();
+ 	        		int x3 = (int)map.get(key).get(2).getX();
+	        		int y3 = (int)map.get(key).get(2).getY();
+	        		int x4 = (int)map.get(key).get(3).getX();
+ 	        		int y4 = (int)map.get(key).get(3).getY();
+ 	        		drawCurve(x1,y1,x2,y2,x3,y3,x4,y4,200,g); 	        	}    		
+ 		}
+ 		
+ 		
+ 		
     	for (int i = 0; i < clicksforLine.size(); i++ )
 		{
     		g.drawRect((int)Math.round(clicksforLine.get(i).getX()),(int) Math.round(clicksforLine.get(i).getY()),2,2);
@@ -151,6 +183,98 @@ public class DrawShape extends JPanel  implements MouseListener {
        	
     }
     
+    /*Get Min X and Max X */
+    public int minXValue (Map <String,ArrayList<Point>> map){
+    	int min = 0 , i = 0;
+ 		for (String key : map.keySet()) {
+ 			if ( min < map.get(key).get(i).getX())
+ 				min = (int) map.get(key).get(i).getX();
+ 			i++;
+ 		}
+    	return min;	
+    }
+    
+    
+    public int maxXValue (Map <String,ArrayList<Point>> map){
+    	int max = 0 , i = 0;
+ 		for (String key : map.keySet()) {
+ 			if ( max < map.get(key).get(i).getX())
+ 				max = (int) map.get(key).get(i).getX();
+ 			i++;
+ 			
+ 		}
+    	return max;	
+    }
+    /*Get Min Y and Max Y */
+
+    public int minYValue (Map <String,ArrayList<Point>> map){
+    	int min = 0 , i = 0;
+ 		for (String key : map.keySet()) {
+ 			if ( min < map.get(key).get(i).getY())
+ 				min = (int) map.get(key).get(i).getY();
+ 			i++;
+ 		}
+    	return min;	
+    }
+    
+    
+    public int maxYValue (Map <String,ArrayList<Point>> map){
+    	int max = 0 , i = 0;
+ 		for (String key : map.keySet()) {
+ 			if ( max < map.get(key).get(i).getY())
+ 				max = (int) map.get(key).get(i).getY();
+ 			i++;
+ 		}
+    	return max;	
+    }
+    /*normaliztion include : Transcation , Scaling, Transcation */
+    public void normalization(Map <String,ArrayList<Point>> map){
+    	/*First Translation*/
+    	int minX,minY,x,y,i = 0;
+    	minX = minXValue(map);
+    	minY = minYValue(map);
+    	int indexTrans = 0;
+    	for (String key : map.keySet()) {
+    		x = (int) (map.get(key).get(indexTrans).getX() - minX);
+    		y = (int) (map.get(key).get(indexTrans).getY()- minY);
+    		/*set new x and y*/
+    		map.get(key).set(i, new Point(x,y));
+    		indexTrans++;
+ 		}
+    	/*Scaling */
+    	/*x = x*s ; y = y*s */
+    	/*initialize s*/
+    	int xMaxWindow= 600,yMaxWindow = 600,s;
+    	if ((xMaxWindow/maxXValue(map)) < (yMaxWindow/maxYValue(map)))
+    	{
+    			s = (int) (0.8*(xMaxWindow/maxXValue(map)));
+    	}
+   		else
+   		{
+    		s = (int) (0.8*(yMaxWindow/maxYValue(map)));
+   		}
+    	int indexScaling = 0;
+    	for (String key : map.keySet()) {
+    		x = (int) (map.get(key).get(indexScaling).getX()*s);
+    		y = (int) (map.get(key).get(indexScaling).getY()*s);
+    		/*set new x and y*/
+    		map.get(key).set(i, new Point(x,y));
+    		indexScaling++;
+ 		}
+    	/*Translation Back*/
+    	/* x = x + 0.1*xMaxWindow ; y = y + 0.1*yMaxWindow */
+    	int iSecTrans = 0;
+    	for (String key : map.keySet()) {
+    		x = (int) (map.get(key).get(i).getX() + 0.1*xMaxWindow);
+    		y = (int) (map.get(key).get(i).getY() + 0.1*yMaxWindow);
+    		/*set new x and y*/
+    		map.get(key).set(i, new Point(x,y));
+    		iSecTrans++;
+ 		}
+   
+    	
+    	
+    }
     //drawSymmetricalPoints method draw the symmetrical points of x and y
     public void drawSymmetricalPoints (int xc, int x, int yc, int y,  Graphics g ){
     	g.drawRect(xc + x, yc + y,1,1);
