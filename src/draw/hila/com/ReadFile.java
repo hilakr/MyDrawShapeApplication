@@ -30,8 +30,8 @@ public class ReadFile {
 	      Point p = new Point(x,y) ;
 	      return p;
 	}
-	
-	public void parseFile () {
+
+	public Map <String,ArrayList<Point>> parseFile () {
 		Map <String,ArrayList<Point>> map = new HashMap<String,ArrayList<Point>>();
 		 try
 		  {
@@ -90,13 +90,10 @@ public class ReadFile {
 		  
 		  }		
 		  catch (Exception e)
-	
 		  {
 		    System.err.format("Exception occurred trying to read '%s'.", "Shapes.txt");
 		    e.printStackTrace();
 		  }
-		
-		
+    	 return map;
 	}
-	
 }

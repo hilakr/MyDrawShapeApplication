@@ -5,7 +5,9 @@ import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 //Shape is enum for the various shapes
 enum Shape {CIRCLE, POLYGON, LINE, CURVE, CLEAR };
@@ -22,6 +24,15 @@ public class DrawShape extends JPanel  implements MouseListener {
 	DrawShape(){
         super();
         setBackground(Color.WHITE);
+        ReadFile file = new ReadFile();
+		file.openFile();       
+		Map <String,ArrayList<Point>> map = new HashMap<String,ArrayList<Point>>();
+		map = file.parseFile(); 
+		for (String key : map.keySet()) {
+	        System.out.println(key + " " + map.get(key));
+	        	
+		}
+		
         addMouseListener(this);
     }
 	//This method is responsible to draw the shapes    
